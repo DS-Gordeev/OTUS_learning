@@ -16,9 +16,5 @@ def create_rectangle(request):
 
 
 class TestFigure:
-
     def test_add_area(self, create_rectangle, create_circle):
-        create_circle.area()
-        create_rectangle.area()
-        assert getattr(create_circle, 'area_value') + getattr(create_rectangle, 'area_value') == \
-               create_rectangle.add_area(create_circle)
+        assert create_circle.area() + create_rectangle.area() == create_rectangle.add_area(create_circle)

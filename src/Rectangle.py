@@ -4,14 +4,15 @@ from src.Figure import Figure
 class Rectangle(Figure):
     name = 'rectangle'
 
-    def __init__(self, rec_side_a: int, rec_side_b: int):
-        self.rec_side_a = rec_side_a
-        self.rec_side_b = rec_side_b
+    def __init__(self, side_a: int, side_b: int):
+        self.side_a = side_a
+        self.side_b = side_b
+        # Невозможно создать фигуру с отрицательными сторонами
+        if self.side_a < 0 or self.side_b < 0:
+            raise ValueError
 
     def area(self) -> int:
-        area_value = self.rec_side_a * self.rec_side_b
-        setattr(Rectangle, 'area_value', area_value)
-        return area_value
+        return self.side_a * self.side_b
 
     def perimeter(self) -> int:
-        return self.rec_side_a * 2 + self.rec_side_b * 2
+        return (self.side_a + self.side_b) * 2

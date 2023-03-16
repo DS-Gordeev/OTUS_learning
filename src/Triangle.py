@@ -9,6 +9,9 @@ class Triangle(Figure):
         self.a = a
         self.b = b
         self.c = c
+        # Невозможно создать треугольник с отрицательными сторонами
+        if self.a < 0 or self.b < 0 or self.c < 0:
+            raise ValueError
         # Треугольник можно создать только если сумма длин двух любых его сторон строго больше длины третьей
         if not (a + b > c) or not (a + c > b) or not (b + c > a):
             raise ValueError
@@ -18,7 +21,5 @@ class Triangle(Figure):
 
     def area(self) -> float:
         # Определяем половину периметра треугольника для расчета площади по формуле Герона
-        p = Triangle.perimeter(self) / 2
-        area_value = round(math.sqrt(p*(p - self.a)*(p - self.b)*(p - self.c)), 2)
-        setattr(Triangle, 'area_value', area_value)
-        return area_value
+        p = self.perimeter() / 2
+        return round(math.sqrt(p*(p - self.a)*(p - self.b)*(p - self.c)), 2)

@@ -13,7 +13,7 @@ class TestTriangle:
         assert triangle.area() == area, f'Ошибка в подсчете площади Треугольника со сторонами - {a, b, c}'
 
     @pytest.mark.parametrize("a, b, c", [(0, 0, 0), (1, 4, 9), (20, 0, 8)])
-    def test_triangle_negative(self, a, b, c):
+    def test_triangle_is_possible(self, a, b, c):
         try:
             Triangle(a, b, c)
         except ValueError:
@@ -27,3 +27,9 @@ class TestTriangle:
         triangle = Triangle(a, b, c)
         assert triangle.perimeter() == perimeter, f'Ошибка в подсчете периметра Треугольника со сторонами - {a, b, c}'
 
+    @pytest.mark.parametrize("a, b, c", [(-12, 13, 14), (12, -13, 14), (12, 13, -14), (-6, -3, -8)])
+    def test_triangle_negative_side(self, a, b, c):
+        try:
+            Triangle(a, b, c)
+        except ValueError:
+            assert True

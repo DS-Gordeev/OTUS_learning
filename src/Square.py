@@ -1,16 +1,11 @@
 from src.Figure import Figure
+from src.Rectangle import Rectangle
 
 
-class Square(Figure):
+class Square(Figure, Rectangle):
     name = 'square'
-
-    def __init__(self, square_side: int):
-        self.square_side = square_side
-
-    def area(self) -> int:
-        area_value = self.square_side * self.square_side
-        setattr(Square, 'area_value', area_value)
-        return self.square_side * self.square_side
-
-    def perimeter(self) -> int:
-        return self.square_side * 4
+    def __init__(self, side_a: int, side_b: int):
+        super().__init__(side_a, side_b)
+        # Невозможно создать квадрат с разными сторонами
+        if self.side_a != self.side_b:
+            raise ValueError
