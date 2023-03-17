@@ -4,11 +4,17 @@ from src.Figure import Figure
 
 class Circle(Figure):
     name = 'circle'
+    MIN_RADIUS = 0
 
+    @classmethod
+    def validate_radius(cls, arg):
+        return arg >= cls.MIN_RADIUS
+
+    # Невозможно создать окружность с отрицательным радиусом
     def __init__(self, radius: int):
-        self.radius = radius
-        # Невозможно создать окружность с отрицательным радиусом
-        if self.radius < 0:
+        if self.validate_radius(radius):
+            self.radius = radius
+        else:
             raise ValueError
 
     def area(self) -> float:
