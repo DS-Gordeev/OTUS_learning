@@ -3,11 +3,7 @@ import requests
 
 
 def pytest_addoption(parser):
-    parser.addoption(
-        "--url",
-        default="https://dog.ceo/api/",
-        help="Base URL for dog API"
-    )
+    parser.addoption("--url", default="https://dog.ceo/api/", help="Base URL for dog API")
 
 
 @pytest.fixture(scope='session')
