@@ -19,12 +19,12 @@ def test_dog_api_1(bread, all_breeds_from_api):
     assert bread in all_breeds_from_api
 
 
-@pytest.mark.parametrize('quantity, resp', [(0, 1), (1, 1), (25, 25), (49, 49), (50, 50), (51, 50), (75, 50), (-1, 1)])
-def test_dog_api_2(base_url, quantity, resp):
+@pytest.mark.parametrize('quantity, response', [(0, 1), (1, 1), (25, 25), (49, 49), (50, 50), (51, 50), (75, 50), (-1, 1)])
+def test_dog_api_2(base_url, quantity, response):
     """Тест проверяет, что API возвращает указанное кол-во случайных фото собак разных пород"""
-    req = requests.get(base_url + f'breeds/image/random/{quantity}]')
-    assert req.status_code == 200
-    assert len(req.json()['message']) == resp
+    res = requests.get(base_url + f'breeds/image/random/{quantity}]')
+    assert res.status_code == 200
+    assert len(res.json()['message']) == response
 
 
 all_breeds_gen = all_breeds_from_json()
@@ -32,18 +32,18 @@ all_breeds_gen = all_breeds_from_json()
 @pytest.mark.parametrize('bread_name', all_breeds_gen)
 def test_dog_api_3(base_url, bread_name):
     """Тест проверяет, что API возвращает фотографии только указанной породы собак (включая разновидности)"""
-    req = requests.get(base_url + f'breed/{bread_name}/images')
-    assert req.status_code == 200
-    for bread_url in req.json()['message']:
+    res = requests.get(base_url + f'breed/{bread_name}/images')
+    assert res.status_code == 200
+    for bread_url in res.json()['message']:
         assert bread_name in bread_url
 
 
 @pytest.mark.parametrize('bread_name', ['boxer', 'poodle', 'rottweiler', 'spitz'])
 def test_dog_api_4(base_url, bread_name):
     """Тест проверяет, что API возвращает случайное фото указанной породы собаки"""
-    req = requests.get(base_url + f'breed/{bread_name}/images/random')
-    assert req.status_code == 200
-    assert bread_name in req.json()['message']
+    res = requests.get(base_url + f'breed/{bread_name}/images/random')
+    assert res.status_code == 200
+    assert bread_name in res.json()['message']
 
 
 @pytest.mark.parametrize('bread_name, sub_bread', [('mastiff', ['bull', 'english', 'tibetan']),
@@ -52,6 +52,6 @@ def test_dog_api_4(base_url, bread_name):
                                                    ])
 def test_dog_api_5(base_url, bread_name, sub_bread):
     """Тест проверяет, что API возвращает разновидности породы указанной породы собак"""
-    req = requests.get(base_url + f'breed/{bread_name}/list')
-    assert req.status_code == 200
-    assert req.json()['message'] == sub_bread
+    res = requests.get(base_url + f'breed/{bread_name}/list')
+    assert res.status_code == 200
+    assert res.json()['message'] == sub_bread
