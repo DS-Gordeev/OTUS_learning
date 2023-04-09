@@ -1,12 +1,15 @@
 import pytest
 import requests
+from csv import DictReader
 from jsonschema import validate
+from test_API.api_files import ALL_USERS_CVS
 
 json = {'title': 'foo',
         'body': 'bar',
         'userId': 1}
 
 headers = {'Content-type': 'application/json; charset=UTF-8'}
+
 
 def test_json_ph_1(base_url):
     """Тест добавляет новую запись posts и проверяет, что добавление прошло корректно"""
@@ -22,6 +25,7 @@ def test_json_ph_2(base_url):
     res = requests.request('delete', url=base_url + 'posts/1')
     assert res.status_code == 200
     assert not res.next
+
 
 @pytest.mark.parametrize('end_point, code', [('posts', 201), ('comments', 201), ('albums', 201),
                                                ('photos', 201), ('todos', 201), ('users', 201)])
@@ -53,5 +57,23 @@ def test_json_ph_4(base_url):
         validate(instance=comment, schema=schema)
 
 
+def users_generator():
+    with open(ALL_USERS_CVS, newline='') as users:
+        reader = DictReader(users)
+        for row in reader:
+            yield row
 
-# https://jsonplaceholder.typicode.com/comments?postId=1&id=5
+
+users_from_csv = users_generator()
+
+
+@pytest.mark.parametrize('used_id', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+def test_json_ph_5(base_url, used_id):
+    """Тест проверяет, что API возвращает корректные поля пользователей: id, name, username, city, website"""
+    res = requests.get(base_url + 'users', params={'id': used_id}).json()[0]
+    next_user = next(users_from_csv)
+    assert res['id'] == int(next_user['id'])
+    assert res['name'] == next_user['name']
+    assert res['username'] == next_user['username']
+    assert res['address']['city'] == next_user['city']
+    assert res['website'] == next_user['website']
