@@ -3,6 +3,7 @@ import json
 import pytest
 from test_API.api_files import ALL_BREEDS_JSON
 
+
 def all_breeds_from_json():
     with open(ALL_BREEDS_JSON, 'r') as f:
         reader = json.loads(f.read())
@@ -12,6 +13,7 @@ def all_breeds_from_json():
 
 
 all_breeds_gen = all_breeds_from_json()
+
 
 @pytest.mark.parametrize('bread', all_breeds_gen)
 def test_dog_api_1(bread, all_breeds_from_api):
@@ -28,6 +30,7 @@ def test_dog_api_2(base_url, quantity, response):
 
 
 all_breeds_gen = all_breeds_from_json()
+
 
 @pytest.mark.parametrize('bread_name', all_breeds_gen)
 def test_dog_api_3(base_url, bread_name):

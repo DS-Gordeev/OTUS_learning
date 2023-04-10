@@ -4,6 +4,7 @@ from csv import DictReader
 from jsonschema import validate
 from test_API.api_files import ALL_USERS_CVS
 
+
 json = {'title': 'foo',
         'body': 'bar',
         'userId': 1}
@@ -65,11 +66,13 @@ def users_generator():
 
 
 users_from_csv = users_generator()
+users_id_from_csv = [i['id'] for i in users_generator()]
 
 
-@pytest.mark.parametrize('used_id', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+@pytest.mark.parametrize('used_id', users_id_from_csv)
 def test_json_ph_5(base_url, used_id):
-    """Тест проверяет, что API возвращает корректные поля пользователей: id, name, username, city, website"""
+    """Тест проверяет, что API возвращает корректные поля пользователей: id, name, username, city, website
+    согласно файлу users.csv"""
     res = requests.get(base_url + 'users', params={'id': used_id}).json()[0]
     next_user = next(users_from_csv)
     assert res['id'] == int(next_user['id'])
