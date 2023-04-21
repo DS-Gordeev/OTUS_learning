@@ -1,20 +1,19 @@
 import pytest
 import requests
+import json
 from csv import DictReader
 from jsonschema import validate
-from test_API.api_files import ALL_USERS_CVS
+from test_API.api_files import ALL_USERS_CVS, PH_DATA, PH_HEADERS
 
 
-json = {'title': 'foo',
-        'body': 'bar',
-        'userId': 1}
-
-headers = {'Content-type': 'application/json; charset=UTF-8'}
+with open(PH_DATA, 'r') as json_file, open(PH_HEADERS, 'r') as headers_file:
+    json_data = json.loads(json_file.read())
+    headers_data = json.loads(headers_file.read())
 
 
 def test_json_ph_1(base_url):
     """Тест добавляет новую запись posts и проверяет, что добавление прошло корректно"""
-    res = requests.post(base_url + 'posts', json=json, headers=headers)
+    res = requests.post(base_url + 'posts', json=json_data, headers=headers_data)
     assert res.status_code == 201
     assert res.json()['title'] == 'foo'
     assert res.json()['body'] == 'bar'
@@ -28,17 +27,16 @@ def test_json_ph_2(base_url):
     assert not res.next
 
 
-@pytest.mark.parametrize('end_point, code', [('posts', 201), ('comments', 201), ('albums', 201),
-                                               ('photos', 201), ('todos', 201), ('users', 201)])
-def test_json_ph_3(base_url, end_point, code):
+@pytest.mark.parametrize('end_point', ['posts', 'comments', 'albums', 'photos', 'todos', 'users'])
+def test_json_ph_3(base_url, end_point):
     """Тест проверяет, что все ручки отвечают корректно"""
-    res = requests.post(base_url + f'{end_point}', json=json, headers=headers)
-    assert res.status_code == code
+    res = requests.post(base_url + f'{end_point}', json=json_data, headers=headers_data)
+    assert res.status_code == 201
 
 
 def test_json_ph_4(base_url):
     """Тест проверяет, что API возвращает все комментарии и они соответствуют схеме"""
-    res = requests.get(base_url + 'comments', json=json, headers=headers)
+    res = requests.get(base_url + 'comments', json=json_data, headers=headers_data)
 
     schema = {
         "type": "object",
@@ -66,17 +64,16 @@ def users_generator():
 
 
 users_from_csv = users_generator()
-users_id_from_csv = [i['id'] for i in users_generator()]
+next(users_from_csv)
 
 
-@pytest.mark.parametrize('used_id', users_id_from_csv)
-def test_json_ph_5(base_url, used_id):
+@pytest.mark.parametrize('user', users_from_csv)
+def test_json_ph_5(base_url, user):
     """Тест проверяет, что API возвращает корректные поля пользователей: id, name, username, city, website
     согласно файлу users.csv"""
-    res = requests.get(base_url + 'users', params={'id': used_id}).json()[0]
-    next_user = next(users_from_csv)
-    assert res['id'] == int(next_user['id'])
-    assert res['name'] == next_user['name']
-    assert res['username'] == next_user['username']
-    assert res['address']['city'] == next_user['city']
-    assert res['website'] == next_user['website']
+    res = requests.get(base_url + 'users', params={'id': user['id']}).json()[0]
+    assert res['id'] == int(user['id'])
+    assert res['name'] == user['name']
+    assert res['username'] == user['username']
+    assert res['address']['city'] == user['city']
+    assert res['website'] == user['website']

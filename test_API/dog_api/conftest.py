@@ -17,4 +17,4 @@ def all_breeds_from_api(base_url):
     """Фикстура для теста test_dog_api_1. Делает один запрос к API и возвращает список всех пород собак"""
     req = requests.get(base_url + 'breeds/list/all')
     assert req.status_code == 200
-    return [k for k, v in req.json()['message'].items()]
+    return req.json()['message'].keys()

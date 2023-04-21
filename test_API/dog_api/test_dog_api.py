@@ -12,10 +12,10 @@ def all_breeds_from_json():
             yield breads
 
 
-all_breeds_gen = all_breeds_from_json()
+all_breeds_gen_test_1 = all_breeds_from_json()
 
 
-@pytest.mark.parametrize('bread', all_breeds_gen)
+@pytest.mark.parametrize('bread', all_breeds_gen_test_1)
 def test_dog_api_1(bread, all_breeds_from_api):
     """Тест проверяет, что API возвращает все породы собак согласно нашему списку из файла"""
     assert bread in all_breeds_from_api
@@ -29,10 +29,10 @@ def test_dog_api_2(base_url, quantity, response):
     assert len(res.json()['message']) == response
 
 
-all_breeds_gen = all_breeds_from_json()
+all_breeds_gen_test_3 = all_breeds_from_json()
 
 
-@pytest.mark.parametrize('bread_name', all_breeds_gen)
+@pytest.mark.parametrize('bread_name', all_breeds_gen_test_3)
 def test_dog_api_3(base_url, bread_name):
     """Тест проверяет, что API возвращает фотографии только указанной породы собак (включая разновидности)"""
     res = requests.get(base_url + f'breed/{bread_name}/images')

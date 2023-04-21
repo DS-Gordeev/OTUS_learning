@@ -2,6 +2,7 @@ import requests
 import pytest
 from random import randint
 from jsonschema import validate
+from http import HTTPStatus
 
 
 @pytest.mark.parametrize('brewery_id', ['d6317b33-57b6-4509-b4f8-d96094716eef',
@@ -11,7 +12,7 @@ from jsonschema import validate
 def test_brewery_api_1(base_url, brewery_id):
     """Тест проверяет, что API возвращает пивоварню с тем id который был указан в запросе"""
     res = requests.get(base_url + f'{brewery_id}')
-    assert res.status_code == 200
+    assert HTTPStatus.OK == 200
     assert res.json()['id'] == brewery_id
 
 
@@ -37,7 +38,7 @@ def test_brewery_api_3(base_url, brewery_type):
 def test_brewery_api_4(base_url, query):
     """Тест проверяет, что API возвращает пивоварни с указанной подстрокой в наименовании и ответ соответствует схеме"""
     res = requests.get(base_url + 'autocomplete', params={'query': query})
-    print(res.json())
+    assert res.status_code == 200
 
     schema = {
         "type": "object",
@@ -58,7 +59,7 @@ def test_brewery_api_4(base_url, query):
 def test_brewery_api_5(base_url, country, brewery_type):
     """Тест проверяет, что API возвращает пивоварни в каждой стране каждого типа и ответ соответствует схеме"""
     res = requests.get(base_url + 'meta', params={'by_country': country, 'by_type': brewery_type})
-
+    assert res.status_code == 200
     schema = {
         "type": "object",
         "properties": {
