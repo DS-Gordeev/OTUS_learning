@@ -27,11 +27,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         status = text.split('\n')[0].split(' ')[1]
 
         # Получаем список всех заголовков (берем все кроме первой)  -->
-        # ['Host: 192.168.1.3:5000', 'Connection: keep-alive', ...]
+        # ['Host: 192.168.1.3:5000\r', 'Connection: keep-alive\r', ...]
         headers_list = text.split('\n')[1:]
 
+        # Убираем символ \r перевода каретки из конца каждого элемента списка -->
+        # ['Host: 192.168.1.3:5000', 'Connection: keep-alive', ...]
+        cleaned_list = [item.replace('\r', '') for item in headers_list]
+
         # При помощи лямбда-функции формируем список строк-заголовков и джойним их в одну строку
-        heads_to_body = '\n'.join((lambda x: [f'<p>Header-name: {i}</p>' for i in x if ':' in i])(headers_list))
+        heads_to_body = '\n'.join((lambda x: [f'<p>Header-name: {i}</p>' for i in x if ':' in i])(cleaned_list))
+        print(heads_to_body)
 
         # Создаем объект httpStatus с кодом из параметра запроса /?status=404  --> 404
         try:
