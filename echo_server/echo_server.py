@@ -2,7 +2,7 @@ import socket
 from http import HTTPStatus
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    srv_addr = ('192.168.1.3', 5000)
+    srv_addr = ('172.20.160.1', 5000)
     s.bind(srv_addr)
     s.listen(1)
 
@@ -12,10 +12,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         conn, addr = s.accept()
         recv_bytes = conn.recv(1024)
         print(conn, addr)
-
-        if not recv_bytes:
-            print('Closing connection...')
-            conn.close()
 
         text = recv_bytes.decode('utf-8')
         print(f'Message received: {text}')
@@ -55,3 +51,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         headers = '\r\n'.join([status_line, 'Content-Type: text/html', f'Content-Lenght: {len(body)}'])
         resp = '\r\n\r\n'.join([headers, body])
         sent_bytes = conn.send(resp.encode('utf-8'))
+
+        # Закрываем соединение
+        print('Closing connection...')
+        conn.close()
